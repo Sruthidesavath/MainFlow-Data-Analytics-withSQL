@@ -1,0 +1,82 @@
+CREATE TABLE Students (
+    StudentID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Gender VARCHAR(1) CHECK (Gender IN ('M', 'F')),
+    Age INT,
+    Grade VARCHAR(10),
+    MathScore INT,
+    ScienceScore INT,
+    EnglishScore INT
+);
+
+INSERT INTO Students (Name, Gender, Age, Grade, MathScore, ScienceScore, EnglishScore) 
+VALUES 
+('Alice Johnson', 'F', 15, 'A', 85, 90, 88),
+('Bob Smith', 'M', 16, 'B', 75, 80, 70),
+('Charlie Brown', 'M', 14, 'A', 95, 85, 92),
+('Daisy Miller', 'F', 17, 'C', 65, 70, 68),
+('Ethan White', 'M', 16, 'B', 78, 85, 80),
+('Fiona Green', 'F', 15, 'A', 92, 87, 90),
+('George Black', 'M', 15, 'C', 50, 60, 55),
+('Hannah Blue', 'F', 14, 'B', 80, 75, 78),
+('Ian Gray', 'M', 16, 'B', 88, 82, 84),
+('Jane Silver', 'F', 15, 'A', 90, 95, 92);
+
+CREATE TABLE Courses (
+    course_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    course_description TEXT
+);
+
+CREATE TABLE Enrolments (
+    enrolment_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    enrolment_date DATE,
+    FOREIGN KEY (student_id) REFERENCES Students(StudentID),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+INSERT INTO Courses (course_name, course_description) 
+VALUES 
+('Mathematics', 'Advanced algebra and calculus.'),
+('Physics', 'Fundamentals of classical and modern physics.'),
+('Chemistry', 'Organic and inorganic chemistry concepts.'),
+('English Literature', 'Analysis of classic and modern literary works.');
+
+INSERT INTO Enrolments (student_id, course_id, enrolment_date) 
+VALUES 
+(1, 1, '2025-01-10'),
+(1, 2, '2025-01-12'),
+(2, 1, '2025-01-15'),
+(3, 3, '2025-01-18'),
+(4, 4, '2025-01-20'),
+(5, 1, '2025-01-22'),
+(5, 3, '2025-01-25'),
+(6, 2, '2025-01-28'),
+(7, 4, '2025-02-01');
+
+-- Task 1: List all students and the courses they are enrolled in
+
+SELECT S.StudentID, S.Name, C.course_name 
+FROM Students S
+INNER JOIN Enrolments E ON S.StudentID = E.student_id
+INNER JOIN Courses C ON E.course_id = C.course_id;
+
+-- Task 2: Find the number of students enrolled in each course
+SELECT C.course_name, COUNT(E.student_id) AS enrolled_students
+FROM Courses C
+LEFT JOIN Enrolments E ON C.course_id = E.course_id
+GROUP BY C.course_name;
+
+-- Task 3: List students who have enrolled in more than one course
+SELECT S.StudentID, S.Name, COUNT(E.course_id) AS course_count
+FROM Students S
+JOIN Enrolments E ON S.StudentID = E.student_id
+GROUP BY S.StudentID, S.Name
+HAVING COUNT(E.course_id) > 1;
+
+-- Task 4: Find courses with no enrolled students
+SELECT C.course_name 
+FROM Courses C
+LEFT JOIN Enrolments E ON C.course_id = E.course_id
+WHERE E.enrolment_id IS NULL;
