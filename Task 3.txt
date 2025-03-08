@@ -1,0 +1,51 @@
+-- Step 1: Database Setup
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    math_score INT,
+    science_score INT,
+    english_score INT
+);
+
+-- Insert Sample Data
+INSERT INTO Students (student_id, name, math_score, science_score, english_score)
+VALUES
+    (1, 'Alice', 85, 78, 90),
+    (2, 'Bob', 92, 88, 76),
+    (3, 'Charlie', 67, 72, 80),
+    (4, 'David', 74, 85, 79),
+    (5, 'Emma', 95, 91, 94),
+    (6, 'Frank', 89, 75, 85),
+    (7, 'Grace', 80, 82, 78);
+
+-- Task 1: Identify Top 5 Students by Total Scores
+SELECT student_id, name, 
+       (math_score + science_score + english_score) AS total_score
+FROM Students
+ORDER BY total_score DESC
+LIMIT 5;
+
+-- Task 2: Calculate Averages Based on Specific Conditions
+-- Example 1: Average score of students who scored above 70 in Math
+SELECT AVG(math_score) AS avg_math_score_above_70
+FROM Students
+WHERE math_score > 70;
+
+-- Example 2: Average total score of students grouped by score range
+SELECT 
+    CASE 
+        WHEN total_score BETWEEN 200 AND 250 THEN '200-250'
+        WHEN total_score BETWEEN 150 AND 199 THEN '150-199'
+        ELSE 'Below 150'
+    END AS score_range,
+    AVG(total_score) AS avg_total_score
+FROM (
+    SELECT student_id, (math_score + science_score + english_score) AS total_score
+    FROM Students
+) AS ScoreTable
+GROUP BY score_range;
+
+-- Task 3: Find Second-Highest Math Score
+SELECT MAX(math_score) AS second_highest_math_score
+FROM Students
+WHERE math_score < (SELECT MAX(math_score) FROM Students);
