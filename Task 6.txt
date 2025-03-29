@@ -1,0 +1,37 @@
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(50),
+    Position VARCHAR(50),
+    HireDate DATE
+);
+
+INSERT INTO Employees (Name, Position, HireDate) VALUES
+('Alice Johnson', 'Manager', '2022-06-15'),
+('Bob Smith', 'Developer', '2023-03-20'),
+('Charlie Brown', 'HR', '2021-09-10'),
+('David Lee', 'Analyst', '2020-12-05'),
+('Emma Davis', 'Designer', '2019-08-22'),
+('Frank White', 'Tester', '2022-04-18'),
+('Grace Hall', 'Support', '2021-11-30'),
+('Henry Adams', 'Admin', '2018-07-25'),
+('Ivy Wilson', 'Consultant', '2020-06-10'),
+('Jack Evans', 'Engineer', '2023-01-05');
+
+-- Modify Table Structure (Add New Columns)
+ALTER TABLE Employees 
+ADD COLUMN LastUpdated DATE,
+ADD COLUMN Status VARCHAR(10) DEFAULT 'Active';
+
+-- Populate New Columns
+UPDATE Employees 
+SET LastUpdated = CURDATE(), Status = 'Active';
+
+
+-- Delete records where Status = 'Inactive'
+DELETE FROM Employees WHERE Status = 'Inactive';
+
+-- Delete records older than a specific date
+DELETE FROM Employees WHERE LastUpdated < '2024-01-01';
+
+-- Confirm Deletions
+SELECT * FROM Employees;
