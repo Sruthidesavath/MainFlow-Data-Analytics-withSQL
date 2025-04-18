@@ -1,0 +1,60 @@
+-- Main table for student records
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    subject VARCHAR(50),
+    marks INT,
+    grade CHAR(2)
+);
+
+-- Log table to record updates
+CREATE TABLE Student_Log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    old_marks INT,
+    new_marks INT,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample data
+INSERT INTO Students (student_id, name, subject, marks, grade)
+VALUES 
+(1, 'Alice', 'Math', 85, NULL),
+(2, 'Bob', 'Science', 72, NULL),
+(3, 'Charlie', 'History', 95, NULL);
+
+-- Simulate the procedure: Update grades
+UPDATE Students
+SET grade = 
+    CASE
+        WHEN marks >= 90 THEN 'A'
+        WHEN marks >= 80 THEN 'B'
+        WHEN marks >= 70 THEN 'C'
+        WHEN marks >= 60 THEN 'D'
+        ELSE 'F'
+    END;
+
+-- Simulate the trigger: Manually log mark changes before update
+-- Step 1: Get old marks of student_id = 2
+INSERT INTO Student_Log (student_id, old_marks, new_marks)
+SELECT student_id, marks, 91 FROM Students WHERE student_id = 2 AND marks != 91;
+
+-- Step 2: Perform the update
+UPDATE Students SET marks = 91 WHERE student_id = 2;
+
+-- Step 3: Recalculate grades after marks update
+UPDATE Students
+SET grade = 
+    CASE
+        WHEN marks >= 90 THEN 'A'
+        WHEN marks >= 80 THEN 'B'
+        WHEN marks >= 70 THEN 'C'
+        WHEN marks >= 60 THEN 'D'
+        ELSE 'F'
+    END;
+
+-- Check final student records
+SELECT * FROM Students;
+
+-- Check log table
+SELECT * FROM Student_Log;
